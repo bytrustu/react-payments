@@ -1,8 +1,7 @@
-@import "card.css";
-@import "input.css";
-@import "button.css";
-@import "modal.css";
-@import "utils.css";
+@import "./card.css";
+@import "./input.css";
+@import "./button.css";
+@import "./utils.css";
 
 body {
   display: flex;
