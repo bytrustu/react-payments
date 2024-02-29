@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { AsProps, StyleProps } from '@/shared/styles';
+import type { AsProps, StyleProps } from '@/shared/types';
 
 type DefaultStyledProps = StyleProps & AsProps;
 

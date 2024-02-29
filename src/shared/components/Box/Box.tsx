@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import styled from '@emotion/styled';
-import { AsProps, StyleProps } from '@/shared/styles';
-import { DefaultStyled } from '@/shared/styles/DefaultStyled.tsx';
+import { DefaultStyled } from '@/shared/styles';
+import type { AsProps, StyleProps } from '@/shared/types';
 
 type BoxProps = PropsWithChildren<StyleProps & AsProps>;
 
