@@ -4,6 +4,12 @@ import { styleToken } from '@/shared/styles';
 export const GlobalStyles = () => (
   <Global
     styles={css`
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
       body {
         display: flex;
         flex-direction: column;
