@@ -35,7 +35,7 @@ const argTypes = {
     options: containerTags,
   },
   display: {
-    options: ['flex', 'block', 'inline', 'inline-VStack', 'none', 'grid', 'inline-flex', 'inline-grid'],
+    options: ['flex', 'block', 'inline', 'inline-block', 'none', 'grid', 'inline-flex', 'inline-grid'],
   },
   flexDirection: {
     options: ['row', 'column', 'row-reverse', 'column-reverse'],

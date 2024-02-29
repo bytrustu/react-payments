@@ -4,7 +4,7 @@ import { styleToken } from '@/shared/styles';
 
 export const AppLayout = ({ children }: PropsWithChildren) => (
   <Box
-    as="section"
+    as="main"
     backgroundColor={styleToken.color.white}
     width="375px"
     minWidth="375px"
