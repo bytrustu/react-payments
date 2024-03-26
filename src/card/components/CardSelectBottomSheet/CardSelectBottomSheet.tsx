@@ -1,5 +1,5 @@
-import type { CardBrand } from '@/card';
-import { CARD_BRANDS } from '@/card';
+import { CARD_BRANDS } from '@/card/constants';
+import type { CardBrand } from '@/card/types';
 import { Backdrop, Button, Circle, Grid, Typography, VStack, styleToken } from '@/shared';
 
 type CardSelectButtonProps = {

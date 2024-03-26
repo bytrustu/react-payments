@@ -1,4 +1,4 @@
-import { CardState } from '@/card';
+import type { CardState } from '@/card/types';
 import { styleToken } from '@/shared';
 
 export enum CardBrandName {

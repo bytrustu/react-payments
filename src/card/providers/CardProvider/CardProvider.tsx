@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, PropsWithChildren, useMemo } from 'react';
-import { CardState } from '@/card';
+import type { CardState } from '@/card/types';
 
 const INITIAL_CARD_STATE: CardState = {
   cardNumber: '0000 0000 0000 0000',

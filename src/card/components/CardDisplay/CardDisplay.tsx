@@ -1,5 +1,5 @@
 import { CardAddDisplay } from './CardAddDisplay';
-import { CardState } from '@/card';
+import type { CardState } from '@/card/types';
 import { Box, Button, Grid, HStack, Typography, VStack, styleToken, StyleProps, replaceMaskText } from '@/shared';
 
 type CardSize = 'big' | 'small';

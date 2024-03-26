@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CardBrand, CardSelectBottomSheet } from '@/card';
+import { CardSelectBottomSheet } from '@/card/components';
+import type { CardBrand } from '@/card/types';
 import { AppDisplay } from '@/shared';
 
 const meta: Meta<typeof CardSelectBottomSheet> = {
