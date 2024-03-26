@@ -40,7 +40,7 @@ export type FormatInputContextValue = {
 };
 
 type FormatInputProps = Partial<FormatInputContextValue> & {
-  defaultValue: string[];
+  value: string[];
   onValueChange?: (payload: { values: string[] }) => void;
   onValueComplete?: (payload: { values: string[] }) => void;
 };
@@ -49,7 +49,7 @@ const FormatInputContext = createContext<FormatInputContextValue | null>(null);
 
 export const FormatInput = ({
   id = '',
-  defaultValue,
+  value,
   onValueChange,
   onValueComplete,
   type = 'alphanumeric',
@@ -62,22 +62,32 @@ export const FormatInput = ({
   const formatFields = findComponentsInChildren(children, FormatField.name);
   const inputElementCount = formatFields.length;
 
-  const { value: values, update: updateValue } = useInputFieldsValues(defaultValue, onValueChange, onValueComplete);
+  const inputFields = useInputFieldsValues(value, onValueChange, onValueComplete);
   const inputRefs = useInputRefs(inputElementCount);
 
   const contextValue = useMemo(
     () => ({
       id,
-      values,
+      values: inputFields.value,
+      updateValue: inputFields.update,
       inputElementCount,
-      updateValue,
       inputRefs,
       type,
       mask,
       separator,
       showCompletedSeparator,
     }),
-    [id, values, inputElementCount, updateValue, inputRefs, type, mask, separator, showCompletedSeparator],
+    [
+      id,
+      inputFields.value,
+      inputFields.update,
+      inputElementCount,
+      inputRefs,
+      type,
+      mask,
+      separator,
+      showCompletedSeparator,
+    ],
   );
 
   return (
@@ -151,6 +161,11 @@ const FormatField = ({
   const validSeparator = index < inputElementCount - 1 && separator && index <= inputElementCount - 1;
   const showSeparator = !showCompletedSeparator || (showCompletedSeparator && maxLength === inputValue?.length);
 
+  const [state, setState] = useState(0);
+  useEffect(() => {
+    setState(state + 1);
+  }, [inputValue]);
+
   return (
     <>
       <TextField
@@ -203,21 +218,10 @@ const FormatInputTextCounter = ({ index, ...props }: PropsWithChildren<{ index: 
   const { inputRefs } = context;
   const inputRef = inputRefs[index];
 
-  const [{ maxLength, currentLength }, setCounterState] = useState({
-    maxLength: 0,
-    currentLength: 0,
-  });
+  const currentLength = inputRef.current?.value.length ?? 0;
+  const maxLength = inputRef.current?.maxLength ?? 0;
 
   const counterText = `${currentLength} / ${maxLength}`;
-
-  useEffect(() => {
-    if (inputRef.current) {
-      setCounterState({
-        maxLength: inputRef.current?.maxLength ?? 0,
-        currentLength: inputRef.current?.value.length ?? 0,
-      });
-    }
-  }, [inputRef]);
 
   return (
     <Typography variant="caption" color={styleToken.color.gray400} {...props}>

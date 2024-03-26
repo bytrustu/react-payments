@@ -33,7 +33,7 @@ type PinInputProps = PropsWithChildren<{
   fontSize?: string;
   fontWeight?: string;
   placeholder?: string;
-  defaultValue?: string[];
+  value?: string[];
   onValueChange?: (details: { values: string[] }) => void;
   onValueComplete?: (details: { values: string[] }) => void;
 }>;
@@ -45,7 +45,7 @@ export const PinInput = ({
   type = 'numeric',
   mask = false,
   placeholder = '*',
-  defaultValue = [],
+  value = [],
   onValueChange,
   onValueComplete,
   children,
@@ -53,7 +53,7 @@ export const PinInput = ({
   const formatFields = findComponentsInChildren(children, PinInputField.name);
   const inputElementCount = formatFields.length;
 
-  const { value: values, update: updateValue } = useInputFieldsValues(defaultValue, onValueChange, onValueComplete);
+  const { value: values, update: updateValue } = useInputFieldsValues(value, onValueChange, onValueComplete);
   const inputRefs = useInputRefs(inputElementCount);
 
   const contextValue = useMemo(
