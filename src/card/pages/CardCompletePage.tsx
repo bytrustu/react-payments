@@ -16,7 +16,7 @@ export const CardCompletePage = () => {
     description,
   } = card;
 
-  const [cardDescriptionInputValue, setCardDescriptionInputValue] = useState<string>(description ?? '');
+  const [cardDescriptionInputValue, setCardDescriptionInputValue] = useState(description ?? '');
 
   const handleCardDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCardDescriptionInputValue(e.target.value.trim());
@@ -28,10 +28,7 @@ export const CardCompletePage = () => {
     if (isCardExist(card)) {
       editCardToOwner({ ...card, description });
     } else {
-      addCardToOwner({
-        ...card,
-        description,
-      });
+      addCardToOwner({ ...card, description });
     }
     goToNext();
   };

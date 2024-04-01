@@ -1,4 +1,14 @@
-import { PropsWithChildren, useContext, createContext, FormEvent, useMemo, RefObject } from 'react';
+import {
+  PropsWithChildren,
+  useContext,
+  createContext,
+  FormEvent,
+  useMemo,
+  RefObject,
+  forwardRef,
+  useState,
+  FocusEvent,
+} from 'react';
 import { useInputFieldsValues, useInputRefs } from './hooks';
 import { findComponentsInChildren, isValidateInputValueByType, isValidInputRef } from './utils';
 import type { StyleProps } from '@/shared';
@@ -93,61 +103,80 @@ const PinInputControl = ({ children }: PropsWithChildren) => (
   </Box>
 );
 
-const PinInputField = ({
-  index,
-  readOnly,
-  color = INPUT_COLOR,
-  fontSize = INPUT_FONT_SIZE,
-  fontWeight = INPUT_FONT_WEIGHT,
-  ...props
-}: { index: number; readOnly?: boolean } & StyleProps) => {
-  const context = useContext(PinInputContext);
-  if (context === null) {
-    throw new Error('PinInput.Input 컴포넌트는 PinInput.Root 하위에서 사용되어야 합니다.');
-  }
-
-  const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask } = context;
-  const inputRef = inputRefs[index];
-
-  const handleChange = (e: FormEvent<HTMLInputElement>) => {
-    const inputValue = e.currentTarget.value;
-    if (!isValidateInputValueByType(type, inputValue)) {
-      return;
-    }
-    updateValue({
+const PinInputField = forwardRef<
+  HTMLInputElement,
+  { index: number; readOnly?: boolean; onBlur?: (e: FocusEvent<HTMLInputElement>) => void } & StyleProps
+>(
+  (
+    {
       index,
-      value: inputValue,
-      inputRefs,
-      maxLength: 1,
-      focus: !readOnly,
-    });
-  };
+      readOnly,
+      color = INPUT_COLOR,
+      fontSize = INPUT_FONT_SIZE,
+      fontWeight = INPUT_FONT_WEIGHT,
+      onBlur,
+      ...props
+    },
+    ref,
+  ) => {
+    const context = useContext(PinInputContext);
+    if (context === null) {
+      throw new Error('PinInput.Input 컴포넌트는 PinInput.Root 하위에서 사용되어야 합니다.');
+    }
 
-  const isLastInput = index === inputElementCount - 1;
-  const inputType = mask ? 'password' : 'text';
-  const inputValue = index < inputElementCount ? values[index] : placeholder;
-  const marginRight = isLastInput ? '0' : '10px';
+    const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask } = context;
+    const inputRef = ref || inputRefs[index];
 
-  return (
-    <TextField
-      id={`pin-input-${id}-${index}`}
-      type={inputType}
-      variant="filled"
-      maxLength={1}
-      value={inputValue}
-      readOnly={readOnly}
-      width="43px"
-      color={color}
-      fontSize={fontSize}
-      fontWeight={fontWeight}
-      textAlign="center"
-      marginRight={marginRight}
-      onChange={handleChange}
-      {...(isValidInputRef(inputRef) && { ref: inputRef })}
-      {...props}
-    />
-  );
-};
+    const [error, setError] = useState(false);
+
+    const handleChange = (e: FormEvent<HTMLInputElement>) => {
+      const inputValue = e.currentTarget.value;
+      if (!isValidateInputValueByType(type, inputValue)) {
+        return;
+      }
+      updateValue({
+        index,
+        value: inputValue,
+        inputRefs,
+        maxLength: 1,
+        focus: !readOnly,
+      });
+      setError(false);
+    };
+
+    const isLastInput = index === inputElementCount - 1;
+    const inputType = mask ? 'password' : 'text';
+    const inputValue = index < inputElementCount ? values[index] : placeholder;
+    const marginRight = isLastInput ? '0' : '10px';
+
+    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+      setError(isValidInputRef(inputRef) && inputRef.current?.value.length === 0);
+      onBlur?.(e);
+    };
+
+    return (
+      <TextField
+        id={`pin-input-${id}-${index}`}
+        type={inputType}
+        variant="filled"
+        maxLength={1}
+        value={inputValue}
+        readOnly={readOnly}
+        width="43px"
+        color={color}
+        fontSize={fontSize}
+        fontWeight={fontWeight}
+        textAlign="center"
+        marginRight={marginRight}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        {...(error && { outline: `1px solid ${styleToken.color.rose}` })}
+        {...(isValidInputRef(inputRef) && { ref: inputRef })}
+        {...props}
+      />
+    );
+  },
+);
 
 PinInput.displayName = 'PinInput';
 

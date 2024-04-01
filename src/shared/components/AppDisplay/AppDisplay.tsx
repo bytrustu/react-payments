@@ -30,7 +30,7 @@ const AppDisplayHeader = ({ children }: PropsWithChildren) => (
 );
 
 const AppDisplayBody = ({ children }: PropsWithChildren) => (
-  <VStack as="section" width={styleToken.width.w100} height="100%" flexGrow={1} overflow="auto">
+  <VStack as="section" width={styleToken.width.w100} height="100%" flexGrow={1}>
     <VStack flex="1 0 auto">{children}</VStack>
   </VStack>
 );

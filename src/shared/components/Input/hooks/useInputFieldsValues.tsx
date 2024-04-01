@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { UpdateValueProps } from '@/shared';
 
 const validateComplete = (values: string[], maxLength?: number) =>
@@ -7,14 +8,20 @@ export const useInputFieldsValues = (
   values: string[],
   onValueChange?: (payload: { values: string[] }) => void,
   onValueComplete?: (payload: { values: string[] }) => void,
+  pattern?: RegExp,
 ) => {
+  const [error, setError] = useState(false);
+
   const updateValue = ({ index, value, inputRefs, maxLength, focus = true }: UpdateValueProps) => {
     const newValues = [...values];
     newValues[index] = value;
     onValueChange?.({ values: newValues });
+    setError(false);
 
-    if (validateComplete?.(newValues, maxLength)) {
-      onValueComplete?.({ values: newValues });
+    if (validateComplete(newValues, maxLength)) {
+      setTimeout(() => {
+        onValueComplete?.({ values: newValues });
+      }, 0);
     }
 
     if (focus) {
@@ -28,5 +35,16 @@ export const useInputFieldsValues = (
     }
   };
 
-  return { value: values, update: updateValue };
+  const validateValues = () => {
+    const validIndexes = values.reduce((acc: number[], value, index) => {
+      if (pattern && !new RegExp(pattern).test(value)) {
+        acc.push(index);
+      }
+      return acc;
+    }, []);
+
+    setError(validIndexes.length > 0);
+  };
+
+  return { value: values, error, update: updateValue, validate: validateValues };
 };

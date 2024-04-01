@@ -60,6 +60,7 @@ export const DefaultStyled = styled.div<DefaultStyledProps>`
   ${({ borderWidth }) => borderWidth && `border-width: ${borderWidth};`};
   ${({ borderColor }) => borderColor && `border-color: ${borderColor};`};
   ${({ borderStyle }) => borderStyle && `border-style: ${borderStyle};`};
+  ${({ outline }) => outline && `outline: ${outline};`};
   ${({ position }) => position && `position: ${position};`};
   ${({ top }) => top && `top: ${top};`};
   ${({ right }) => right && `right: ${right};`};
