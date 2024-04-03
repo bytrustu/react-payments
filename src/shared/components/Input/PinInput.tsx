@@ -44,6 +44,7 @@ type PinInputProps = PropsWithChildren<{
   fontWeight?: string;
   placeholder?: string;
   value?: string[];
+  pattern?: RegExp;
   onValueChange?: (details: { values: string[] }) => void;
   onValueComplete?: (details: { values: string[] }) => void;
 }>;
@@ -56,6 +57,7 @@ export const PinInput = ({
   mask = false,
   placeholder = '*',
   value = [],
+  pattern,
   onValueChange,
   onValueComplete,
   children,
@@ -63,7 +65,12 @@ export const PinInput = ({
   const formatFields = findComponentsInChildren(children, PinInputField.name);
   const inputElementCount = formatFields.length;
 
-  const { value: values, update: updateValue } = useInputFieldsValues(value, onValueChange, onValueComplete);
+  const { value: values, update: updateValue } = useInputFieldsValues({
+    values: value,
+    pattern,
+    onValueChange,
+    onValueComplete,
+  });
   const inputRefs = useInputRefs(inputElementCount);
 
   const contextValue = useMemo(
@@ -170,7 +177,7 @@ const PinInputField = forwardRef<
         marginRight={marginRight}
         onChange={handleChange}
         onBlur={handleBlur}
-        {...(error && { outline: `1px solid ${styleToken.color.rose}` })}
+        {...(error && { outline: `2px solid ${styleToken.color.rose}` })}
         {...(isValidInputRef(inputRef) && { ref: inputRef })}
         {...props}
       />

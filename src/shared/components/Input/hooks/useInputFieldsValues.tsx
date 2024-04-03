@@ -4,12 +4,14 @@ import { UpdateValueProps } from '@/shared';
 const validateComplete = (values: string[], maxLength?: number) =>
   values.every(Boolean) && values.every((value) => value.length === maxLength);
 
-export const useInputFieldsValues = (
-  values: string[],
-  onValueChange?: (payload: { values: string[] }) => void,
-  onValueComplete?: (payload: { values: string[] }) => void,
-  pattern?: RegExp,
-) => {
+type UseInputFieldsValues = {
+  values: string[];
+  pattern?: RegExp;
+  onValueChange?: (payload: { values: string[] }) => void;
+  onValueComplete?: (payload: { values: string[] }) => void;
+};
+
+export const useInputFieldsValues = ({ values, pattern, onValueChange, onValueComplete }: UseInputFieldsValues) => {
   const [error, setError] = useState(false);
 
   const updateValue = ({ index, value, inputRefs, maxLength, focus = true }: UpdateValueProps) => {
@@ -43,7 +45,7 @@ export const useInputFieldsValues = (
       return acc;
     }, []);
 
-    setError(validIndexes.length > 0);
+    setError(values.some(Boolean) && validIndexes.length > 0);
   };
 
   return { value: values, error, update: updateValue, validate: validateValues };

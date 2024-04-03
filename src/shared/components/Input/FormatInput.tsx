@@ -66,7 +66,7 @@ export const FormatInput = ({
   const formatFields = findComponentsInChildren(children, FormatField.name);
   const inputElementCount = formatFields.length;
 
-  const inputFields = useInputFieldsValues(value, onValueChange, onValueComplete, pattern);
+  const inputFields = useInputFieldsValues({ values: value, pattern, onValueChange, onValueComplete });
   const inputRefs = useInputRefs(inputElementCount);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -267,7 +267,7 @@ const FormatInputControl = ({
       gap={gap}
       backgroundColor={backgroundColor}
       borderRadius={borderRadius}
-      {...(context.error && { outline: `1px solid ${styleToken.color.rose}` })}
+      {...(context.error && { outline: `2px solid ${styleToken.color.rose}` })}
       {...props}
     >
       {children}
