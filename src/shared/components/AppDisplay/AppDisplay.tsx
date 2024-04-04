@@ -10,8 +10,8 @@ export const AppDisplay = ({ children }: PropsWithChildren) => (
     width="375px"
     minWidth="375px"
     height="700px"
-    borderRadius="15px"
     border={`1px solid ${styleToken.color.body}`}
+    zIndex={styleToken.zIndex.modal}
   >
     <AppDisplayLayout>{children}</AppDisplayLayout>
   </Box>

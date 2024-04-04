@@ -26,7 +26,6 @@ export const CardDisplay = ({
       <VStack
         color={styleToken.color.gray600}
         backgroundColor={color}
-        boxShadow={`3px 3px 5px ${styleToken.color.shadow}`}
         borderRadius="5px"
         padding="10px 14px"
         spacing="0"

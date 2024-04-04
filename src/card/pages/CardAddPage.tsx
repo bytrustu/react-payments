@@ -1,9 +1,8 @@
-import { FocusEvent } from 'react';
+import { FocusEvent, useEffect } from 'react';
 import { CardBrand } from 'src/card/types';
 import ArrowLeft from '@/assets/arrow-left.svg';
 import {
   CardDisplay,
-  CardSelectBottomSheet,
   useCard,
   useSelectCardBrand,
   CARD_NUMBER_ID,
@@ -30,7 +29,6 @@ import {
   AppDisplay,
   Box,
   Button,
-  Circle,
   FormatInput,
   HStack,
   PinInput,
@@ -40,16 +38,17 @@ import {
   useFunnel,
   useInputRefs,
   useInputValues,
-  useToggle,
   VStack,
+  useModal,
+  CardBrandSelectBottomSheet,
+  Circle,
 } from '@/shared';
 
 export const CardAddPage = () => {
   const { goToPrev, goToNext } = useFunnel();
   const { card, setCard, isCardExist } = useCard();
-
   const selectCardBrand = useSelectCardBrand();
-  const bottomSheetToggle = useToggle(true);
+  const showModal = useModal();
 
   const [cardNumberRef, expirationDateRef, ownerNameRef, securityCodeRef, passwordRef] = useInputRefs(5);
 
@@ -84,9 +83,13 @@ export const CardAddPage = () => {
     password.valid,
   ].every(Boolean);
 
-  const selectCardBrandAndCloseBottomSheet = (newCardBrand: CardBrand) => {
-    selectCardBrand.select(newCardBrand);
-    bottomSheetToggle.close();
+  const showCardSelectBottomSheet = async () => {
+    const cardBrand = await showModal<CardBrand>(<CardBrandSelectBottomSheet values={CARD_BRANDS} />, {
+      closeOverlayClick: true,
+      placement: 'bottom',
+    });
+    selectCardBrand.select(cardBrand as CardBrand);
+    cardNumberRef?.current?.focus();
   };
 
   const handleFormatExpirationMonthBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -135,20 +138,12 @@ export const CardAddPage = () => {
     goToNext();
   };
 
+  useEffect(() => {
+    showCardSelectBottomSheet();
+  }, []);
+
   return (
     <>
-      <CardSelectBottomSheet opened={bottomSheetToggle.value} onOverlayClick={bottomSheetToggle.close}>
-        {CARD_BRANDS.map(({ label, color }) => (
-          <CardSelectButton
-            key={`card-select-${label}`}
-            color={color}
-            label={label}
-            onClick={() => {
-              selectCardBrandAndCloseBottomSheet?.({ label, color });
-            }}
-          />
-        ))}
-      </CardSelectBottomSheet>
       <AppDisplay.Header>
         <Button
           variant="ghost"
@@ -181,7 +176,7 @@ export const CardAddPage = () => {
               cardNumber={cardNumber.transformedValue}
               expirationDate={expirationDate.transformedValue}
               ownerName={ownerName.transformedValue}
-              onClick={bottomSheetToggle.open}
+              onClick={showCardSelectBottomSheet}
             />
           </Box>
 
@@ -305,11 +300,31 @@ export const CardAddPage = () => {
                   ref={securityCodeRef}
                 />
               </FormatInput.Control>
-              <Tooltip />
+              <Tooltip
+                message="보안코드 3자리"
+                direction="right"
+                icon={
+                  <Circle backgroundColor="unset" border={`1px solid ${styleToken.color.gray400}`} cursor="pointer">
+                    <Typography
+                      color={styleToken.color.gray400}
+                      variant="title"
+                      fontWeight={styleToken.fontWeight.bold}
+                    >
+                      ?
+                    </Typography>
+                  </Circle>
+                }
+              />
             </HStack>
           </FormatInput.Root>
 
-          <PinInput.Root id={CARD_PASSWORD_ID} mask value={password.value} onValueChange={password.update}>
+          <PinInput.Root
+            id={CARD_PASSWORD_ID}
+            mask
+            value={password.value}
+            enableVirtualKeyboard
+            onValueChange={password.update}
+          >
             <PinInput.Label>{PASSWORD_LABEL}</PinInput.Label>
             <PinInput.Control>
               <PinInput.Input index={0} fontSize="20px" ref={passwordRef} />
@@ -332,18 +347,3 @@ export const CardAddPage = () => {
     </>
   );
 };
-
-type CardSelectButtonProps = {
-  onClick: () => void;
-} & CardBrand;
-
-const CardSelectButton = ({ color, label, ...props }: CardSelectButtonProps) => (
-  <Button variant="ghost" backgroundColor={styleToken.color.white} width="100%" padding="0" {...props}>
-    <VStack width="100%" justifyContent="center" alignItems="center" spacing="10px">
-      <Circle backgroundColor={color} width="36px" height="36px" />
-      <Typography variant="caption" color={styleToken.color.black}>
-        {label}
-      </Typography>
-    </VStack>
-  </Button>
-);

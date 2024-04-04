@@ -14,3 +14,5 @@ export * from './Backdrop';
 export * from './Funnel';
 export * from './Input';
 export * from './Tooltip';
+export * from './BottomSheet';
+export * from './Overlay';
