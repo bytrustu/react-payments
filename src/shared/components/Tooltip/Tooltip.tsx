@@ -47,7 +47,7 @@ export const Tooltip = ({ message, direction = 'top', icon }: PropsWithChildren<
     <Box
       position="relative"
       display="inline-block"
-      onMouseEnter={() => setOpened(true)}
+      onClick={() => setOpened(true)}
       onMouseLeave={() => setOpened(false)}
     >
       {icon}
