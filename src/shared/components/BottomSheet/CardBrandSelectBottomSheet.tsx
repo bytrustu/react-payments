@@ -39,3 +39,5 @@ const CardBrandSelectButton = ({ color, label, ...props }: CardSelectButtonProps
     </VStack>
   </Button>
 );
+
+CardBrandSelectBottomSheet.displayName = 'CardBrandSelectBottomSheet';

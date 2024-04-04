@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { useInputFieldsValues, useInputRefs } from './hooks';
 import { findComponentsInChildren, isValidateInputValueByType, isValidInputRef } from './utils';
-import { cardPasswordNumbers } from '@/card';
+import { CARD_PASSWORD_NUMBERS } from '@/card';
 import {
   StyleProps,
   INPUT_COLOR,
@@ -178,7 +178,7 @@ const PinInputField = forwardRef<
 
     const handleFocus = async (e: FocusEvent<HTMLInputElement>) => {
       if (enableVirtualKeyboard) {
-        const virtualKeyboardValues = cardPasswordNumbers.map(String);
+        const virtualKeyboardValues = CARD_PASSWORD_NUMBERS.map(String);
         const virtualKeyboardValue = await showModal(
           <VirtualKeyboardBottomSheet values={virtualKeyboardValues} shuffle />,
           {

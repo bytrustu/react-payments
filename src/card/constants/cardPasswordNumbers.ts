@@ -11,7 +11,7 @@ export enum CardPasswordNumber {
   Nine = 9,
 }
 
-export const cardPasswordNumbers = [
+export const CARD_PASSWORD_NUMBERS = [
   CardPasswordNumber.Zero,
   CardPasswordNumber.One,
   CardPasswordNumber.Two,

@@ -43,3 +43,5 @@ const prepareKeyboardButtons = (values: string[]) => {
     return acc;
   }, []);
 };
+
+VirtualKeyboardBottomSheet.displayName = 'VirtualKeyboardBottomSheet';

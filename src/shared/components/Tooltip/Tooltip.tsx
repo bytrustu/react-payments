@@ -77,3 +77,5 @@ export const Tooltip = ({ message, direction = 'top', icon }: PropsWithChildren<
     </Box>
   );
 };
+
+Tooltip.displayName = 'Tooltip';
