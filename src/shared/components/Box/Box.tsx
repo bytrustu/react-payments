@@ -7,6 +7,8 @@ type BoxProps = PropsWithChildren<
   StyleProps &
     AsProps & {
       onBlur?: (e: FocusEvent<HTMLDivElement>) => void;
+      onMouseEnter?: () => void;
+      onMouseLeave?: () => void;
       tabIndex?: number;
     }
 >;
