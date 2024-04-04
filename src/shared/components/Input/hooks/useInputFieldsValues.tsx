@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UpdateValueProps } from '@/shared';
+import { forceNextTaskQueue, UpdateValueProps } from '@/shared';
 
 const validateComplete = (values: string[], maxLength?: number) =>
   values.every(Boolean) && values.every((value) => value.length === maxLength);
@@ -21,19 +21,21 @@ export const useInputFieldsValues = ({ values, pattern, onValueChange, onValueCo
     setError(false);
 
     if (validateComplete(newValues, maxLength)) {
-      setTimeout(() => {
+      forceNextTaskQueue(() => {
         onValueComplete?.({ values: newValues });
-      }, 0);
+      });
     }
 
-    if (focus) {
-      if ((maxLength && value.length === maxLength) || (!maxLength && value)) {
-        if (index < inputRefs.length - 1) {
-          inputRefs[index + 1].current?.focus();
+    if (focus && !inputRefs[index + 1]?.current?.readOnly) {
+      forceNextTaskQueue(() => {
+        if ((maxLength && value.length === maxLength) || (!maxLength && value)) {
+          if (index < inputRefs.length - 1) {
+            inputRefs[index + 1].current?.focus();
+          }
+        } else if (value.length === 0 && index > 0) {
+          inputRefs[index - 1].current?.focus();
         }
-      } else if (value.length === 0 && index > 0) {
-        inputRefs[index - 1].current?.focus();
-      }
+      });
     }
   };
 

@@ -46,4 +46,4 @@ export type BoxModelProps = PickCSSProperties<
 
 export type PositionProps = PickCSSProperties<'position' | 'top' | 'right' | 'bottom' | 'left'>;
 
-export type OtherProps = PickCSSProperties<'cursor' | 'zIndex' | 'opacity' | 'overflow' | 'transition' | 'outline'>;
+export type OtherProps = PickCSSProperties<'cursor' | 'zIndex' | 'opacity' | 'overflow' | 'transition' | 'transform'>;

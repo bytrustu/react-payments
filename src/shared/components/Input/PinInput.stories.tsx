@@ -24,7 +24,7 @@ type Story = StoryObj<typeof PinInput>;
 
 export const Primary: Story = {
   render: () => (
-    <PinInput.Root id="input-story" mask defaultValue={['', '', '', '']}>
+    <PinInput.Root id="input-story" mask value={['', '', '', '']}>
       <PinInput.Label>Pin Input Label</PinInput.Label>
       <PinInput.Control>
         <PinInput.Input index={0} fontSize="20px" />
@@ -38,7 +38,7 @@ export const Primary: Story = {
 
 export const WithReadOnly: Story = {
   render: () => (
-    <PinInput.Root id="input-story" mask defaultValue={['', '', '0', '0']}>
+    <PinInput.Root id="input-story" mask value={['', '', '', '']}>
       <PinInput.Label>Pin Input Label</PinInput.Label>
       <PinInput.Control>
         <PinInput.Input index={0} fontSize="20px" />
@@ -52,7 +52,7 @@ export const WithReadOnly: Story = {
 
 export const WithShuffleIndex: Story = {
   render: () => (
-    <PinInput.Root id="input-story" mask defaultValue={['', '', '', '']}>
+    <PinInput.Root id="input-story" mask value={['', '', '', '']}>
       <PinInput.Label>Pin Input Label</PinInput.Label>
       <PinInput.Control>
         <PinInput.Input index={0} fontSize="20px" />
@@ -69,7 +69,7 @@ export const WithCompltedValue: Story = {
     <PinInput.Root
       id="input-story"
       mask
-      defaultValue={['', '', '', '']}
+      value={['', '', '', '']}
       onValueComplete={() => {
         window.alert('complete');
       }}

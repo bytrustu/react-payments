@@ -71,4 +71,5 @@ export const DefaultStyled = styled.div<DefaultStyledProps>`
   ${({ opacity }) => opacity && `opacity: ${opacity};`};
   ${({ overflow }) => overflow && `overflow: ${overflow};`};
   ${({ transition }) => transition && `transition: ${transition};`};
+  ${({ transform }) => transform && `transform: ${transform};`};
 `;

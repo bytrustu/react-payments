@@ -11,8 +11,9 @@ import {
 } from 'react';
 import { useInputFieldsValues, useInputRefs } from './hooks';
 import { findComponentsInChildren, isValidateInputValueByType, isValidInputRef } from './utils';
-import type { StyleProps } from '@/shared';
+import { cardPasswordNumbers } from '@/card';
 import {
+  StyleProps,
   INPUT_COLOR,
   INPUT_FONT_SIZE,
   INPUT_FONT_WEIGHT,
@@ -22,18 +23,9 @@ import {
   Box,
   Label,
   TextField,
+  useModal,
+  VirtualKeyboardBottomSheet,
 } from '@/shared';
-
-type PinInputContextValue = {
-  id: string;
-  values: string[];
-  inputElementCount: number;
-  placeholder: string;
-  updateValue: ({ index, value, inputRefs, maxLength, focus }: UpdateValueProps) => void;
-  inputRefs: RefObject<HTMLInputElement | null>[];
-  type: InputType;
-  mask: boolean;
-};
 
 type PinInputProps = PropsWithChildren<{
   id?: string;
@@ -45,9 +37,19 @@ type PinInputProps = PropsWithChildren<{
   placeholder?: string;
   value?: string[];
   pattern?: RegExp;
+  enableVirtualKeyboard?: boolean;
   onValueChange?: (details: { values: string[] }) => void;
   onValueComplete?: (details: { values: string[] }) => void;
 }>;
+
+type PinInputContextValue = {
+  values: string[];
+  inputElementCount: number;
+  updateValue: ({ index, value, inputRefs, maxLength, focus }: UpdateValueProps) => void;
+  inputRefs: RefObject<HTMLInputElement | null>[];
+  type: InputType;
+  mask: boolean;
+} & Pick<PinInputProps, 'id' | 'placeholder' | 'enableVirtualKeyboard'>;
 
 const PinInputContext = createContext<PinInputContextValue | null>(null);
 
@@ -58,6 +60,7 @@ export const PinInput = ({
   placeholder = '*',
   value = [],
   pattern,
+  enableVirtualKeyboard,
   onValueChange,
   onValueComplete,
   children,
@@ -83,8 +86,9 @@ export const PinInput = ({
       inputRefs,
       type,
       mask,
+      enableVirtualKeyboard,
     }),
-    [id, values, inputElementCount, placeholder, updateValue, type, mask],
+    [id, values, inputElementCount, placeholder, updateValue, type, mask, enableVirtualKeyboard],
   );
 
   return <PinInputContext.Provider value={contextValue}>{children}</PinInputContext.Provider>;
@@ -112,7 +116,12 @@ const PinInputControl = ({ children }: PropsWithChildren) => (
 
 const PinInputField = forwardRef<
   HTMLInputElement,
-  { index: number; readOnly?: boolean; onBlur?: (e: FocusEvent<HTMLInputElement>) => void } & StyleProps
+  {
+    index: number;
+    readOnly?: boolean;
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  } & StyleProps
 >(
   (
     {
@@ -122,6 +131,7 @@ const PinInputField = forwardRef<
       fontSize = INPUT_FONT_SIZE,
       fontWeight = INPUT_FONT_WEIGHT,
       onBlur,
+      onFocus,
       ...props
     },
     ref,
@@ -131,13 +141,18 @@ const PinInputField = forwardRef<
       throw new Error('PinInput.Input 컴포넌트는 PinInput.Root 하위에서 사용되어야 합니다.');
     }
 
-    const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask } = context;
-    const inputRef = ref || inputRefs[index];
+    const showModal = useModal();
 
+    const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask, enableVirtualKeyboard } =
+      context;
+    const inputRef = ref || inputRefs[index];
     const [error, setError] = useState(false);
 
     const handleChange = (e: FormEvent<HTMLInputElement>) => {
       const inputValue = e.currentTarget.value;
+      if (enableVirtualKeyboard) {
+        return;
+      }
       if (!isValidateInputValueByType(type, inputValue)) {
         return;
       }
@@ -146,7 +161,7 @@ const PinInputField = forwardRef<
         value: inputValue,
         inputRefs,
         maxLength: 1,
-        focus: !readOnly,
+        focus: true,
       });
       setError(false);
     };
@@ -157,8 +172,32 @@ const PinInputField = forwardRef<
     const marginRight = isLastInput ? '0' : '10px';
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      setError(isValidInputRef(inputRef) && inputRef.current?.value.length === 0);
       onBlur?.(e);
+      setError(isValidInputRef(inputRef) && inputRef.current?.value.length === 0);
+    };
+
+    const handleFocus = async (e: FocusEvent<HTMLInputElement>) => {
+      if (enableVirtualKeyboard) {
+        const virtualKeyboardValues = cardPasswordNumbers.map(String);
+        const virtualKeyboardValue = await showModal(
+          <VirtualKeyboardBottomSheet values={virtualKeyboardValues} shuffle />,
+          {
+            closeOverlayClick: true,
+            placement: 'bottom',
+          },
+        );
+        if (virtualKeyboardValue) {
+          updateValue({
+            index,
+            value: virtualKeyboardValue,
+            inputRefs,
+            maxLength: 1,
+            focus: true,
+          });
+        }
+      }
+      onFocus?.(e);
+      setError(false);
     };
 
     return (
@@ -177,6 +216,7 @@ const PinInputField = forwardRef<
         marginRight={marginRight}
         onChange={handleChange}
         onBlur={handleBlur}
+        onFocus={handleFocus}
         {...(error && { outline: `2px solid ${styleToken.color.rose}` })}
         {...(isValidInputRef(inputRef) && { ref: inputRef })}
         {...props}
