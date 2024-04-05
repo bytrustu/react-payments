@@ -79,8 +79,8 @@ export const OverlayProvider = ({ children }: PropsWithChildren) => {
     <OverlayContext.Provider value={openOverlay}>
       {children}
       {overlays.map(({ content, options, key }, index) => {
-        const isHidden = index < overlays.length - 1;
-        const overlayStyle = isHidden ? { display: 'none' } : {};
+        const hiddenStatus = index < overlays.length - 1;
+        const overlayStyle = hiddenStatus ? { display: 'none' } : {};
         const handleOverlayClose = () => closeOverlay(key);
 
         const handleOverlaySubmit = (submitResult: OverlaySubmitResult) => submitOverlay(key, submitResult);

@@ -179,7 +179,7 @@ const PinInputField = forwardRef<
     const handleFocus = async (e: FocusEvent<HTMLInputElement>) => {
       if (enableVirtualKeyboard) {
         const virtualKeyboardValues = CARD_PASSWORD_NUMBERS.map(String);
-        const virtualKeyboardValue = await showModal(
+        const virtualKeyboardValue = await showModal<string>(
           <VirtualKeyboardBottomSheet values={virtualKeyboardValues} shuffle />,
           {
             closeOverlayClick: true,
