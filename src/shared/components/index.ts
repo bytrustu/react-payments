@@ -17,3 +17,4 @@ export * from './Tooltip';
 export * from './BottomSheet';
 export * from './Overlay';
 export * from './Checkbox';
+export * from './Carousel';
