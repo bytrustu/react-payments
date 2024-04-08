@@ -1,4 +1,4 @@
-export * from './CardAddForm.tsx';
-export * from './CardCompleteForm.tsx';
-export * from './CardListForm.tsx';
+export * from './CardAddForm';
+export * from './CardCompleteForm';
+export * from './CardListForm';
 export * from './CardPaymentForm';

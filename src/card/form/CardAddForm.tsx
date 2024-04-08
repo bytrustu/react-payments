@@ -1,6 +1,7 @@
 import { FocusEvent, useEffect } from 'react';
 import { CardBrand } from 'src/card/types';
 import ArrowLeft from '@/assets/arrow-left.svg';
+import Close from '@/assets/close.svg';
 import {
   CardDisplay,
   useCard,
@@ -24,6 +25,7 @@ import {
   isValidateCardState,
   cardValueTransformers,
   CARD_BRANDS,
+  CardPageIndex,
 } from '@/card';
 import {
   AppDisplay,
@@ -42,10 +44,11 @@ import {
   useModal,
   CardBrandSelectBottomSheet,
   Circle,
+  Flex,
 } from '@/shared';
 
-export const CardAddPage = () => {
-  const { goToPrev, goToNext } = useFunnel();
+export const CardAddForm = () => {
+  const { goToPrev, goToNext, goToIndex } = useFunnel();
   const { card, setCard, isCardExist } = useCard();
   const selectCardBrand = useSelectCardBrand();
   const showModal = useModal();
@@ -90,6 +93,10 @@ export const CardAddPage = () => {
     });
     selectCardBrand.select(cardBrand as CardBrand);
     cardNumberRef?.current?.focus();
+  };
+
+  const moveCardPaymentForm = () => {
+    goToIndex(CardPageIndex.CardPayment);
   };
 
   const handleFormatExpirationMonthBlur = (e: FocusEvent<HTMLInputElement>) => {
@@ -145,26 +152,31 @@ export const CardAddPage = () => {
   return (
     <>
       <AppDisplay.Header>
-        <Button
-          variant="ghost"
-          color="teal"
-          fontSize="20px"
-          display="flex"
-          alignItems="center"
-          width="fit-content"
-          padding="10px 0"
-          onClick={goToPrev}
-        >
-          <img src={ArrowLeft} alt="이전 페이지 버튼" width="12px" height="12px" />
-          <Typography
-            variant="title"
-            color={styleToken.color.black}
-            fontWeight={styleToken.fontWeight.medium}
-            marginLeft="10px"
+        <Flex flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Button
+            variant="ghost"
+            color="teal"
+            fontSize="20px"
+            display="flex"
+            alignItems="center"
+            width="fit-content"
+            padding="10px 0"
+            onClick={goToPrev}
           >
-            카드 추가
-          </Typography>
-        </Button>
+            <img src={ArrowLeft} alt="이전 페이지 버튼" width="12px" height="12px" />
+            <Typography
+              variant="title"
+              color={styleToken.color.black}
+              fontWeight={styleToken.fontWeight.medium}
+              marginLeft="10px"
+            >
+              카드 추가
+            </Typography>
+          </Button>
+          <Button variant="ghost" padding="0" onClick={moveCardPaymentForm}>
+            <img src={Close} alt="닫기 버튼" width="32px" height="32px" />
+          </Button>
+        </Flex>
       </AppDisplay.Header>
       <AppDisplay.Body>
         <VStack spacing="18px" marginTop="20px">

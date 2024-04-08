@@ -1,11 +1,11 @@
 import { ChangeEvent, useState } from 'react';
-import { CardDisplay, useCard } from '@/card';
+import { CardDisplay, CardPageIndex, useCard } from '@/card';
 import { AppDisplay, Button, HStack, TextField, Typography, VStack, removeAllSpaces, useFunnel } from '@/shared';
 
 const CARD_DESCRIPTION_MAX_LENGTH = 10;
 
-export const CardCompletePage = () => {
-  const { goToNext } = useFunnel();
+export const CardCompleteForm = () => {
+  const { goToIndex } = useFunnel();
   const { card, addCardToOwner, editCardToOwner, isCardExist } = useCard();
   const {
     label: cardBrandName,
@@ -30,7 +30,7 @@ export const CardCompletePage = () => {
     } else {
       addCardToOwner({ ...card, description });
     }
-    goToNext();
+    goToIndex(CardPageIndex.CardList);
   };
 
   return (
