@@ -123,6 +123,7 @@ const getCardStyles = (size: CardSize) => {
   };
   const typographyVariant: CardTypographyVariant = size === 'big' ? 'headline' : 'body';
   const maskFontSize = size === 'big' ? '14px' : '10px';
+
   return { cardDisplayProps, cardChipProps, typographyVariant, maskFontSize };
 };
 

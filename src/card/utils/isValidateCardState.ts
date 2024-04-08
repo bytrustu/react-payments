@@ -1,6 +1,5 @@
-import type { CardState } from '../types/CardState.type';
-import { cardValueSplitters } from './cardValueSplitters';
-import { isValidateCardModule } from './isValidateCardModule';
+import type { CardState } from '@/card';
+import { cardValueSplitters, isValidateCardModule } from '@/card';
 
 export const isValidateCardState = (card: {
   cardNumber: string;
@@ -12,6 +11,10 @@ export const isValidateCardState = (card: {
   color: string;
   createdTimestamp: number;
 }): card is CardState => {
+  if (!card) {
+    return false;
+  }
+
   const { cardNumber, expirationDate, securityCode, password, label } = card;
 
   const splitCardNumber = cardValueSplitters.number(cardNumber);
