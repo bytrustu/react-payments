@@ -41,7 +41,10 @@ export type TypographyProps = PickCSSProperties<
 export type BackgroundProps = PickCSSProperties<`background${'Color' | 'Image' | 'Size' | 'Position' | 'Repeat'}`>;
 
 export type BoxModelProps = PickCSSProperties<
-  'boxShadow' | 'border' | `border${`Radius` | 'Width' | 'Color' | 'Style'}` | 'outline'
+  | 'boxShadow'
+  | 'border'
+  | `border${'Top' | 'Bottom' | 'Left' | 'Right' | `Radius` | 'Width' | 'Color' | 'Style'}`
+  | 'outline'
 >;
 
 export type PositionProps = PickCSSProperties<'position' | 'top' | 'right' | 'bottom' | 'left'>;

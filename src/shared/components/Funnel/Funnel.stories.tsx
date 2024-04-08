@@ -1,7 +1,7 @@
 import { CardProvider } from 'src/card/providers';
 import { Meta, StoryObj } from '@storybook/react';
 import { Funnel } from './Funnel';
-import { CardCompletePage, CardAddPage, CardListPage, CardPageIndex } from '@/card';
+import { CardCompleteForm, CardAddForm, CardListForm, CardPageIndex } from '@/card';
 import { AppDisplay, OverlayProvider } from '@/shared';
 
 const meta: Meta<typeof Funnel> = {
@@ -11,16 +11,6 @@ const meta: Meta<typeof Funnel> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  args: {},
-  decorators: [
-    (Story) => (
-      <CardProvider>
-        <OverlayProvider>
-          <Story />
-        </OverlayProvider>
-      </CardProvider>
-    ),
-  ],
 };
 
 export default meta;
@@ -31,36 +21,23 @@ export const Primary: Story = {
   render: () => (
     <AppDisplay.Root>
       <OverlayProvider>
-        <CardProvider>
+        <CardProvider cardStorageKey="story">
           <Funnel.Root>
-            <Funnel.Step index={CardPageIndex.CardListPage}>
-              <CardListPage />
+            <Funnel.Step index={CardPageIndex.CardPayment}>
+              <CardListForm />
             </Funnel.Step>
-            <Funnel.Step index={CardPageIndex.CardAddPage}>
-              <CardAddPage />
+            <Funnel.Step index={CardPageIndex.CardList}>
+              <CardListForm />
             </Funnel.Step>
-            <Funnel.Step index={CardPageIndex.CardCompletePage}>
-              <CardCompletePage />
+            <Funnel.Step index={CardPageIndex.CardAdd}>
+              <CardAddForm />
+            </Funnel.Step>
+            <Funnel.Step index={CardPageIndex.CardComplete}>
+              <CardCompleteForm />
             </Funnel.Step>
           </Funnel.Root>
         </CardProvider>
       </OverlayProvider>
     </AppDisplay.Root>
-  ),
-};
-
-export const WithStartIndex: Story = {
-  render: () => (
-    <Funnel.Root startIndex={0}>
-      <Funnel.Step index={0}>
-        <CardListPage />
-      </Funnel.Step>
-      <Funnel.Step index={1}>
-        <CardAddPage />
-      </Funnel.Step>
-      <Funnel.Step index={2}>
-        <CardCompletePage />
-      </Funnel.Step>
-    </Funnel.Root>
   ),
 };

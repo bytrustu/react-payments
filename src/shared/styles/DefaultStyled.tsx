@@ -2,8 +2,6 @@ import styled from '@emotion/styled';
 
 import type { AsProps, StyleProps } from '@/shared/types';
 
-type DefaultStyledProps = StyleProps & AsProps;
-
 export const DefaultStyled = styled.div<DefaultStyledProps>`
   ${({ display }) => display && `display: ${display};`};
   ${({ flex }) => flex && `flex: ${flex};`};
@@ -57,6 +55,10 @@ export const DefaultStyled = styled.div<DefaultStyledProps>`
   ${({ boxShadow }) => boxShadow && `box-shadow: ${boxShadow};`};
   ${({ borderRadius }) => borderRadius && `border-radius: ${borderRadius};`};
   ${({ border }) => border && `border: ${border};`};
+  ${({ borderTop }) => borderTop && `border-top: ${borderTop};`};
+  ${({ borderBottom }) => borderBottom && `border-bottom: ${borderBottom};`};
+  ${({ borderLeft }) => borderLeft && `border-left: ${borderLeft};`};
+  ${({ borderRight }) => borderRight && `border-right: ${borderRight};`};
   ${({ borderWidth }) => borderWidth && `border-width: ${borderWidth};`};
   ${({ borderColor }) => borderColor && `border-color: ${borderColor};`};
   ${({ borderStyle }) => borderStyle && `border-style: ${borderStyle};`};
@@ -73,3 +75,5 @@ export const DefaultStyled = styled.div<DefaultStyledProps>`
   ${({ transition }) => transition && `transition: ${transition};`};
   ${({ transform }) => transform && `transform: ${transform};`};
 `;
+
+type DefaultStyledProps = StyleProps & AsProps;
