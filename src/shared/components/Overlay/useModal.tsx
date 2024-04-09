@@ -1,4 +1,5 @@
-import { OverlayContent, OverlayOption, useOverlay } from '@/shared';
+import type { OverlayContent, OverlayOption } from './Overlay.type';
+import { useOverlay } from './OverlayProvider';
 
 export const useModal = () => {
   const showOverlay = useOverlay();

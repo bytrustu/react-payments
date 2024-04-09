@@ -8,7 +8,8 @@ import {
   isValidElement,
   ReactElement,
 } from 'react';
-import { Overlay, OverlayOpenFn, OverlayOption, OverlaySubmitResult, OverlayContent } from '@/shared';
+import { Overlay } from './Overlay';
+import type { OverlayOpenFn, OverlayOption, OverlaySubmitResult, OverlayContent } from './Overlay.type';
 
 export const OverlayContext = createContext<OverlayOpenFn | null>(null);
 

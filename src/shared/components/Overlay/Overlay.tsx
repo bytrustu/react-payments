@@ -2,8 +2,8 @@ import React, { CSSProperties } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import type { OverlayContent, OverlayOption, OverlaySubmitResult } from './Overlay.type';
 import { Backdrop, styleToken } from '@/shared';
-import { OverlayContent, OverlayOption, OverlaySubmitResult } from '@/shared/components/Overlay/Overlay.type.ts';
 
 const getOverlayContainerStyle = (placement: OverlayOption['placement']) => {
   switch (placement) {
