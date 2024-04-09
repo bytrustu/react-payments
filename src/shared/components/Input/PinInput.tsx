@@ -1,30 +1,18 @@
-import {
-  PropsWithChildren,
-  useContext,
-  createContext,
-  FormEvent,
-  useMemo,
-  RefObject,
-  forwardRef,
-  useState,
-  FocusEvent,
-} from 'react';
+import { PropsWithChildren, useContext, useMemo, forwardRef, FocusEvent } from 'react';
 import { useInputFieldsValues, useInputRefs } from './hooks';
-import { findComponentsInChildren, isValidateInputValueByType, isValidInputRef } from './utils';
-import { CARD_PASSWORD_NUMBERS } from '@/card';
+import { usePinInputField } from './hooks/usePinInputField';
+import { PinInputContext } from './PinInput.context';
+import { findComponentsInChildren } from './utils';
 import {
   StyleProps,
   INPUT_COLOR,
   INPUT_FONT_SIZE,
   INPUT_FONT_WEIGHT,
   InputType,
-  UpdateValueProps,
   styleToken,
   Box,
   Label,
   TextField,
-  useModal,
-  VirtualKeyboardBottomSheet,
 } from '@/shared';
 
 type PinInputProps = PropsWithChildren<{
@@ -41,17 +29,6 @@ type PinInputProps = PropsWithChildren<{
   onValueChange?: (details: { values: string[] }) => void;
   onValueComplete?: (details: { values: string[] }) => void;
 }>;
-
-type PinInputContextValue = {
-  values: string[];
-  inputElementCount: number;
-  updateValue: ({ index, value, inputRefs, maxLength, focus }: UpdateValueProps) => void;
-  inputRefs: RefObject<HTMLInputElement | null>[];
-  type: InputType;
-  mask: boolean;
-} & Pick<PinInputProps, 'id' | 'placeholder' | 'enableVirtualKeyboard'>;
-
-const PinInputContext = createContext<PinInputContextValue | null>(null);
 
 export const PinInput = ({
   id = '',
@@ -136,89 +113,20 @@ const PinInputField = forwardRef<
     },
     ref,
   ) => {
-    const context = useContext(PinInputContext);
-    if (context === null) {
-      throw new Error('PinInput.Input 컴포넌트는 PinInput.Root 하위에서 사용되어야 합니다.');
-    }
-
-    const showModal = useModal();
-
-    const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask, enableVirtualKeyboard } =
-      context;
-    const inputRef = ref || inputRefs[index];
-    const [error, setError] = useState(false);
-
-    const handleChange = (e: FormEvent<HTMLInputElement>) => {
-      const inputValue = e.currentTarget.value;
-      if (enableVirtualKeyboard) {
-        return;
-      }
-      if (!isValidateInputValueByType(type, inputValue)) {
-        return;
-      }
-      updateValue({
-        index,
-        value: inputValue,
-        inputRefs,
-        maxLength: 1,
-        focus: true,
-      });
-      setError(false);
-    };
-
-    const isLastInput = index === inputElementCount - 1;
-    const inputType = mask ? 'password' : 'text';
-    const inputValue = index < inputElementCount ? values[index] : placeholder;
-    const marginRight = isLastInput ? '0' : '10px';
-
-    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      onBlur?.(e);
-      setError(isValidInputRef(inputRef) && inputRef.current?.value.length === 0);
-    };
-
-    const handleFocus = async (e: FocusEvent<HTMLInputElement>) => {
-      if (enableVirtualKeyboard) {
-        const virtualKeyboardValues = CARD_PASSWORD_NUMBERS.map(String);
-        const virtualKeyboardValue = await showModal<string>(
-          <VirtualKeyboardBottomSheet values={virtualKeyboardValues} shuffle />,
-          {
-            closeOverlayClick: true,
-            placement: 'bottom',
-          },
-        );
-        if (virtualKeyboardValue) {
-          updateValue({
-            index,
-            value: virtualKeyboardValue,
-            inputRefs,
-            maxLength: 1,
-            focus: true,
-          });
-        }
-      }
-      onFocus?.(e);
-      setError(false);
-    };
+    const { error, ...restPinInputField } = usePinInputField({ ref, index, onBlur, onFocus });
 
     return (
       <TextField
-        id={`pin-input-${id}-${index}`}
-        type={inputType}
         variant="filled"
         maxLength={1}
-        value={inputValue}
         readOnly={readOnly}
         width="43px"
         color={color}
         fontSize={fontSize}
         fontWeight={fontWeight}
         textAlign="center"
-        marginRight={marginRight}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onFocus={handleFocus}
         {...(error && { outline: `2px solid ${styleToken.color.rose}` })}
-        {...(isValidInputRef(inputRef) && { ref: inputRef })}
+        {...restPinInputField}
         {...props}
       />
     );
