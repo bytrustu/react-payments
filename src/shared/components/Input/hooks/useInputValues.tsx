@@ -13,7 +13,7 @@ export const useInputValues = (
     setValues(values);
   };
 
-  const valid = options?.validate ? options.validate(values) : true;
+  const valid = options?.validate?.(values) ?? true;
   const transformedValue = options?.transform ? options.transform(values) : values.join('');
 
   return { value: values, transformedValue, valid, update: updateValues };
