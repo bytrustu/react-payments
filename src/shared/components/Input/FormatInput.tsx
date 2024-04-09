@@ -12,21 +12,10 @@ import {
   forwardRef,
 } from 'react';
 import { useInputFieldsValues, useInputRefs } from './hooks';
+import { INPUT_COLOR, INPUT_FONT_SIZE, INPUT_FONT_WEIGHT } from './Input.constant';
+import type { UpdateValueProps, InputType } from './Input.type';
 import { findComponentsInChildren, isValidateInputValueByType, isValidInputRef } from './utils';
-import {
-  StyleProps,
-  styleToken,
-  Box,
-  HStack,
-  Label,
-  TextField,
-  Typography,
-  INPUT_COLOR,
-  INPUT_FONT_SIZE,
-  INPUT_FONT_WEIGHT,
-  UpdateValueProps,
-  InputType,
-} from '@/shared';
+import { StyleProps, styleToken, Box, HStack, Label, TextField, Typography } from '@/shared';
 
 export type FormatInputContextValue = {
   id: string;
