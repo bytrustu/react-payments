@@ -1,11 +1,17 @@
-import React, { CSSProperties } from 'react';
+import React, { PropsWithChildren } from 'react';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import type { OverlayContent, OverlayOption, OverlaySubmitResult } from './Overlay.type';
 import { Backdrop, styleToken } from '@/shared';
 
-const getOverlayContainerStyle = (placement: OverlayOption['placement']) => {
+type OverlayProps = Partial<{
+  opened: boolean;
+  close: () => void;
+  closeOverlayClick: boolean;
+  placement: 'bottom' | 'center';
+}>;
+
+const getOverlayContainerStyle = (placement: OverlayProps['placement']) => {
   switch (placement) {
     case 'bottom':
       return css`
@@ -28,27 +34,15 @@ const getOverlayContainerStyle = (placement: OverlayOption['placement']) => {
   }
 };
 
-export const OverlayContainer = styled.div<Pick<OverlayOption, 'placement'>>`
-  max-width: 2000px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+export const OverlayContainer = styled.div<Pick<OverlayProps, 'placement'>>`
   z-index: ${styleToken.zIndex.modal};
-  ${({ placement }) => getOverlayContainerStyle(placement || 'center')}
+  ${({ placement }) => getOverlayContainerStyle(placement ?? 'center')}
 `;
 
-type OverlayProps = {
-  opened: boolean;
-  onClose: () => void;
-  onSubmit: (submitResult: OverlaySubmitResult) => void;
-  style?: CSSProperties;
-  children: OverlayContent;
-} & OverlayOption;
-
-export const Overlay = ({ opened, onClose, onSubmit, closeOverlayClick, placement, style, children }: OverlayProps) => {
+export const Overlay = ({ opened, close, closeOverlayClick, placement, children }: PropsWithChildren<OverlayProps>) => {
   const handleBackdropClick = () => {
     if (closeOverlayClick) {
-      onClose();
+      close?.();
     }
   };
 
@@ -57,11 +51,10 @@ export const Overlay = ({ opened, onClose, onSubmit, closeOverlayClick, placemen
   };
 
   return opened ? (
-    <>
-      <Backdrop onClick={handleBackdropClick} />
-      <OverlayContainer placement={placement} onClick={handleOverlayContainerStopPropagation} style={style}>
-        {typeof children === 'function' ? children({ onClose, onSubmit }) : children}
+    <Backdrop onClick={handleBackdropClick}>
+      <OverlayContainer placement={placement} onClick={handleOverlayContainerStopPropagation}>
+        {children}
       </OverlayContainer>
-    </>
+    </Backdrop>
   ) : null;
 };

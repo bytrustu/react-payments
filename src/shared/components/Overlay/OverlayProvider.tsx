@@ -1,110 +1,54 @@
 import {
   createContext,
   useState,
-  useContext,
   useCallback,
   PropsWithChildren,
-  cloneElement,
-  isValidElement,
-  ReactElement,
+  useMemo,
+  useContext,
+  Fragment,
+  ReactNode,
 } from 'react';
-import { Overlay } from './Overlay';
-import type { OverlayOpenFn, OverlayOption, OverlaySubmitResult, OverlayContent } from './Overlay.type';
 
-export const OverlayContext = createContext<OverlayOpenFn | null>(null);
-
-const defaultOverlayOption: OverlayOption = {
-  closeOverlayClick: false,
-  placement: 'center',
+export type OverlayContent = (options: { close: () => void; opened: boolean }) => ReactNode;
+export type OverlayContextType = {
+  openOverlay: (content: OverlayContent) => void;
 };
 
-type OverlayState = {
-  content: OverlayContent;
-  options: OverlayOption;
-  key: string;
-  resolver: (value: unknown) => void;
-};
+export const OverlayContext = createContext<OverlayContextType | null>(null);
 
 export const OverlayProvider = ({ children }: PropsWithChildren) => {
-  const [overlays, setOverlays] = useState<OverlayState[]>([]);
-  const [overlayCounter, setOverlayCounter] = useState(0);
+  const [overlays, setOverlays] = useState<{ key: string; content: OverlayContent }[]>([]);
 
-  const openOverlay: OverlayOpenFn = useCallback(
-    (content, option) => {
-      setOverlayCounter((prevModalCounter) => prevModalCounter + 1);
-      const key = `modal-${overlayCounter}`;
-
-      setOverlays((prevOverlays) => [
-        ...prevOverlays,
-        {
-          content,
-          options: { ...defaultOverlayOption, ...(option ?? {}) },
-          key,
-          resolver: () => {},
-        },
-      ]);
-
-      return new Promise((resolve) => {
-        setOverlays((prevOverlays) =>
-          prevOverlays.map((prevOverlay) =>
-            prevOverlay.key === key
-              ? {
-                  ...prevOverlay,
-                  resolver: resolve,
-                }
-              : prevOverlay,
-          ),
-        );
+  const openOverlay = useCallback((content: OverlayContent) => {
+    const key = `overlay-${Date.now()}`;
+    setOverlays((prevOverlays) => [...prevOverlays, { key, content }]);
+    return () => {
+      const opened = true;
+      setOverlays((prevOverlays) => {
+        if (!opened) {
+          return prevOverlays;
+        }
+        const overlay = prevOverlays.find((overlay) => overlay.key === key);
+        if (overlay) {
+          overlay.content = (options) => content({ ...options, opened });
+        }
+        return prevOverlays;
       });
-    },
-    [overlayCounter],
-  );
+    };
+  }, []);
 
-  const closeOverlay = (key: string) => {
-    const targetOverlay = overlays.find((modal) => modal.key === key);
-    if (targetOverlay) {
-      targetOverlay.resolver(false);
-    }
-    setOverlays((prevOverlays) => prevOverlays.filter((modal) => modal.key !== key));
-  };
+  const closeOverlay = useCallback((key: string) => {
+    setOverlays((prevOverlays) => prevOverlays.filter((overlay) => overlay.key !== key));
+  }, []);
 
-  const submitOverlay = (key: string, result: OverlaySubmitResult) => {
-    const targetOverlay = overlays.find((modal) => modal.key === key);
-    if (targetOverlay) {
-      targetOverlay.resolver(result);
-      closeOverlay(key);
-    }
-  };
+  const contextValue = useMemo(() => ({ openOverlay }), [openOverlay]);
 
   return (
-    <OverlayContext.Provider value={openOverlay}>
+    <OverlayContext.Provider value={contextValue}>
       {children}
-      {overlays.map(({ content, options, key }, index) => {
-        const hiddenStatus = index < overlays.length - 1;
-        const overlayStyle = hiddenStatus ? { display: 'none' } : {};
-        const handleOverlayClose = () => closeOverlay(key);
-
-        const handleOverlaySubmit = (submitResult: OverlaySubmitResult) => submitOverlay(key, submitResult);
-        return (
-          <Overlay
-            key={key}
-            opened
-            onClose={handleOverlayClose}
-            onSubmit={handleOverlaySubmit}
-            closeOverlayClick={options.closeOverlayClick}
-            placement={options.placement}
-            style={overlayStyle}
-          >
-            {typeof content === 'function'
-              ? content({ onClose: handleOverlayClose, onSubmit: handleOverlaySubmit })
-              : isValidElement(content) &&
-                cloneElement(content as ReactElement, {
-                  onClose: handleOverlayClose,
-                  onSubmit: handleOverlaySubmit,
-                })}
-          </Overlay>
-        );
-      })}
+      {overlays.slice(-1).map(({ key, content }) => (
+        <Fragment key={key}>{content({ close: () => closeOverlay(key), opened: true })}</Fragment>
+      ))}
     </OverlayContext.Provider>
   );
 };
@@ -116,5 +60,13 @@ export const useOverlay = () => {
     throw new Error('useOverlay를 사용하려면 OverlayProvider를 상위에 제공해야 합니다.');
   }
 
-  return context;
+  const { openOverlay } = context;
+  const open = useCallback((content: OverlayContent) => openOverlay(content), [openOverlay]);
+
+  return useMemo(
+    () => ({
+      open,
+    }),
+    [open],
+  );
 };
