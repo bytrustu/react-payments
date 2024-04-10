@@ -8,7 +8,7 @@ const App = () => {
 
   const openPayments = async () => {
     try {
-      await loadNearPayments({
+      loadNearPayments({
         orderId: '1234',
         totalAmount: 10000,
         onPaymentComplete: (paymentResult: PaymentResult) => {
