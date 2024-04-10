@@ -34,7 +34,6 @@ type UseLoadNearPaymentsProps = {
 export const useLoadNearPayments = ({ clientId }: UseLoadNearPaymentsProps) => {
   const overlay = useOverlay();
   const cardStorageKey = `near-payments-${clientId}`;
-  const ownerCards = JSON.parse(localStorage.getItem(cardStorageKey) ?? '[]');
 
   return ({ orderId, totalAmount, onPaymentComplete, onPaymentCancel }: PaymentForm) => {
     if (!clientId || clientId.trim() === '') {
@@ -48,6 +47,8 @@ export const useLoadNearPayments = ({ clientId }: UseLoadNearPaymentsProps) => {
     if (Number.isNaN(totalAmount) || totalAmount <= 0) {
       throw createError(ERROR_CODES.INVALID_AMOUNT);
     }
+
+    const ownerCards = JSON.parse(localStorage.getItem(cardStorageKey) ?? '[]');
 
     if (ownerCards.length > 0 && !ownerCards.every((card: any) => isValidateCardState(card))) {
       throw createError(ERROR_CODES.INVALID_OWNER_CARDS);
