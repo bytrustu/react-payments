@@ -1,5 +1,4 @@
 import { FocusEvent, useEffect } from 'react';
-import { CardBrand } from 'src/card/types';
 import ArrowLeft from '@/assets/arrow-left.svg';
 import Close from '@/assets/close.svg';
 import {
@@ -41,17 +40,18 @@ import {
   useInputRefs,
   useInputValues,
   VStack,
-  useModal,
   CardBrandSelectBottomSheet,
   Circle,
   Flex,
+  Overlay,
+  useOverlay,
 } from '@/shared';
 
 export const CardAddForm = () => {
   const { goToPrev, goToNext, goToIndex } = useFunnel();
   const { card, setCard, isCardExist } = useCard();
   const selectCardBrand = useSelectCardBrand();
-  const showModal = useModal();
+  const overlay = useOverlay();
 
   const [cardNumberRef, expirationDateRef, ownerNameRef, securityCodeRef, passwordRef] = useInputRefs(5);
 
@@ -86,13 +86,19 @@ export const CardAddForm = () => {
     password.valid,
   ].every(Boolean);
 
-  const showCardSelectBottomSheet = async () => {
-    const cardBrand = await showModal<CardBrand>(<CardBrandSelectBottomSheet values={CARD_BRANDS} />, {
-      closeOverlayClick: true,
-      placement: 'bottom',
-    });
-    selectCardBrand.select(cardBrand as CardBrand);
-    cardNumberRef?.current?.focus();
+  const showCardSelectBottomSheet = () => {
+    overlay.open(({ close, opened }) => (
+      <Overlay opened={opened} close={close} closeOverlayClick placement="bottom">
+        <CardBrandSelectBottomSheet
+          values={CARD_BRANDS}
+          close={close}
+          onCardBrandClick={(cardBrand) => {
+            selectCardBrand.select(cardBrand);
+            cardNumberRef?.current?.focus();
+          }}
+        />
+      </Overlay>
+    ));
   };
 
   const moveCardPaymentForm = () => {

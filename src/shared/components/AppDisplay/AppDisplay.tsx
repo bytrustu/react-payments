@@ -12,14 +12,13 @@ export const AppDisplay = ({ children }: PropsWithChildren) => (
     minWidth="375px"
     height="700px"
     border={`1px solid ${styleToken.color.body}`}
-    zIndex={styleToken.zIndex.modal}
   >
     <AppDisplayLayout>{children}</AppDisplayLayout>
   </Box>
 );
 
 const AppDisplayLayout = ({ children }: PropsWithChildren) => (
-  <VStack as="section" height="100%" padding="16px 24px">
+  <VStack as="section" height="100%" padding="16px 24px" backgroundColor={styleToken.color.white}>
     {children}
   </VStack>
 );

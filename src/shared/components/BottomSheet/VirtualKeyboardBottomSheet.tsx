@@ -7,11 +7,12 @@ type ButtonValue = {
 
 interface VirtualKeyboardBottomSheetProps {
   onSubmit?: (submitResult: string) => void;
+  onClick: (value: string) => void;
   values: string[];
   shuffle?: boolean;
 }
 
-export const VirtualKeyboardBottomSheet = ({ onSubmit, values, shuffle = false }: VirtualKeyboardBottomSheetProps) => {
+export const VirtualKeyboardBottomSheet = ({ onClick, values, shuffle = false }: VirtualKeyboardBottomSheetProps) => {
   const shuffledValues = shuffle ? [...values].sort(() => 0.5 - Math.random()) : values;
   const virtualKeyboardButtons = prepareKeyboardButtons(shuffledValues);
 
@@ -23,7 +24,7 @@ export const VirtualKeyboardBottomSheet = ({ onSubmit, values, shuffle = false }
           variant="ghost"
           color={styleToken.color.black}
           height="100%"
-          onClick={() => button.value && onSubmit?.(button.value)}
+          onClick={() => button.value && onClick(button.value)}
           disabled={button.disabled}
         >
           {button.value}

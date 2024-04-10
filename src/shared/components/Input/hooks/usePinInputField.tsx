@@ -2,7 +2,7 @@ import { FocusEvent, FormEvent, ForwardedRef, useContext, useState } from 'react
 import { PinInputContext } from '../PinInput.context';
 import { isValidateInputValueByType, isValidInputRef } from '../utils';
 import { CARD_PASSWORD_NUMBERS } from '@/card';
-import { useModal, VirtualKeyboardBottomSheet } from '@/shared';
+import { Overlay, useOverlay, VirtualKeyboardBottomSheet } from '@/shared';
 
 type UsePinInputFieldProps = {
   ref?: ForwardedRef<HTMLInputElement>;
@@ -17,7 +17,7 @@ export const usePinInputField = ({ ref, index, onBlur, onFocus }: UsePinInputFie
     throw new Error('PinInput.Input 컴포넌트는 PinInput.Root 하위에서 사용되어야 합니다.');
   }
 
-  const showModal = useModal();
+  const overlay = useOverlay();
   const { id, inputElementCount, placeholder, values, updateValue, inputRefs, type, mask, enableVirtualKeyboard } =
     context;
   const inputRef = ref || inputRefs[index];
@@ -47,13 +47,23 @@ export const usePinInputField = ({ ref, index, onBlur, onFocus }: UsePinInputFie
   const handleFocus = async (e: FocusEvent<HTMLInputElement>) => {
     if (enableVirtualKeyboard) {
       const virtualKeyboardValues = CARD_PASSWORD_NUMBERS.map(String);
-      const virtualKeyboardValue = await showModal<string>(
-        <VirtualKeyboardBottomSheet values={virtualKeyboardValues} shuffle />,
-        { closeOverlayClick: true, placement: 'bottom' },
-      );
-
-      if (virtualKeyboardValue) {
-        updateValue({ index, value: virtualKeyboardValue, inputRefs, maxLength: 1, focus: true });
+      const keyboardValue = await new Promise<string>((resolve) => {
+        overlay.open(({ close, opened }) => (
+          <Overlay opened={opened} placement="bottom">
+            <VirtualKeyboardBottomSheet
+              values={virtualKeyboardValues}
+              shuffle
+              onClick={(value) => {
+                close();
+                resolve(value);
+              }}
+            />
+            ,
+          </Overlay>
+        ));
+      });
+      if (keyboardValue) {
+        updateValue({ index, value: keyboardValue, inputRefs, maxLength: 1, focus: true });
       }
     }
 

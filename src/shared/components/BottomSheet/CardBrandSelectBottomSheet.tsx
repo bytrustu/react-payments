@@ -2,11 +2,12 @@ import { CardBrand } from '@/card';
 import { BottomSheet, Button, Circle, styleToken, Typography, VStack } from '@/shared';
 
 type CardBrandSelectBottomSheetProps = {
-  onSubmit?: (submitResult: CardBrand) => void;
+  close: () => void;
+  onCardBrandClick?: (cardBrand: CardBrand) => void;
   values: CardBrand[];
 };
 
-export const CardBrandSelectBottomSheet = ({ onSubmit, values }: CardBrandSelectBottomSheetProps) => {
+export const CardBrandSelectBottomSheet = ({ values, close, onCardBrandClick }: CardBrandSelectBottomSheetProps) => {
   const sliceValues = values.slice(0, 8);
 
   return (
@@ -17,7 +18,8 @@ export const CardBrandSelectBottomSheet = ({ onSubmit, values }: CardBrandSelect
           color={color}
           label={label}
           onClick={() => {
-            onSubmit?.({ label, color });
+            onCardBrandClick?.({ label, color });
+            close();
           }}
         />
       ))}

@@ -1,5 +1,5 @@
 import { CardPayments, isValidateCardState, PaymentForm } from '@/card';
-import { useModal } from '@/shared';
+import { Overlay, useOverlay } from '@/shared';
 
 const ERROR_CODES = {
   INVALID_CLIENT_ID: 'INVALID_CLIENT_ID',
@@ -32,7 +32,7 @@ type UseLoadNearPaymentsProps = {
 };
 
 export const useLoadNearPayments = ({ clientId }: UseLoadNearPaymentsProps) => {
-  const showModal = useModal();
+  const overlay = useOverlay();
   const cardStorageKey = `near-payments-${clientId}`;
   const ownerCards = JSON.parse(localStorage.getItem(cardStorageKey) ?? '[]');
 
@@ -62,16 +62,24 @@ export const useLoadNearPayments = ({ clientId }: UseLoadNearPaymentsProps) => {
     }
 
     try {
-      return showModal(
-        <CardPayments
-          cardStorageKey={cardStorageKey}
-          orderId={orderId}
-          totalAmount={totalAmount}
-          initialOwnerCards={ownerCards}
-          onPaymentComplete={onPaymentComplete}
-          onPaymentCancel={onPaymentCancel}
-        />,
-      );
+      return overlay.open(({ close, opened }) => (
+        <Overlay close={close} opened={opened}>
+          <CardPayments
+            cardStorageKey={cardStorageKey}
+            orderId={orderId}
+            totalAmount={totalAmount}
+            initialOwnerCards={ownerCards}
+            onPaymentComplete={(paymentResult) => {
+              onPaymentComplete(paymentResult);
+              close();
+            }}
+            onPaymentCancel={(paymentCancel) => {
+              onPaymentCancel(paymentCancel);
+              close();
+            }}
+          />
+        </Overlay>
+      ));
     } catch (error) {
       throw createError(ERROR_CODES.PAYMENT_PROCESS_ERROR, error);
     }
