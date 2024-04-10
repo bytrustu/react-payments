@@ -39,7 +39,6 @@ export const CardProvider = ({
 
   const resetCurrentCard = () => {
     setCard(INITIAL_CARD_STATE);
-    localStorage.removeItem(cardStorageKey);
   };
 
   const addCardToOwner = (card: CardState) => {
