@@ -1,9 +1,9 @@
 import type { Preview, StoryFn } from '@storybook/react';
 import { GlobalStyles } from '../src/shared/styles';
+import { NearPaymentsProvider } from '../src/card';
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -15,10 +15,10 @@ const preview: Preview = {
 
 export const decorators = [
   (Story: StoryFn) => (
-    <>
+    <NearPaymentsProvider>
       <GlobalStyles />
       <Story />
-    </>
+    </NearPaymentsProvider>
   ),
 ];
 
