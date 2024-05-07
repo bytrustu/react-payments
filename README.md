@@ -11,8 +11,9 @@
 <br />
 
 ### 배포
-- 데모: https://react-payments.vercel.app/
-- Storybook: https://65df65049f1fc0b697b58174-evqzzedbqi.chromatic.com/?path=/docs/docs-readme--docs
+- [👀 데모사이트](https://react-payments.vercel.app/)  
+- [🏞️ 스토리북](https://65df65049f1fc0b697b58174-evqzzedbqi.chromatic.com/?path=/docs/docs-readme--docs)
+
 
 <br />
 
